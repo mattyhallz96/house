@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="The House">
+<meta name="theme-color" content="#0D0D0D">
+<title>The House</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Syne+Mono&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0D0D0D;
+  --card:#161616;
+  --card2:#1C1C1C;
+  --ink:#F0EAD6;
+  --ink2:#807870;
+  --ink3:#3E3C38;
+  --border:#252320;
+  --s:#B8F04A;--s-dk:#0D0D0D;
+  --m:#FFD23F;--m-dk:#0D0D0D;
+  --b:#FF5C35;--b-dk:#0D0D0D;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Nunito',sans-serif;color:var(--ink);display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
+
+/* grain */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.35}
+
+/* HEADER */
+.hdr{padding:calc(var(--safe-top) + 18px) 20px 0;flex-shrink:0}
+.hdr-eye{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.hdr-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.app-title{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;letter-spacing:-2px;line-height:0.9;color:var(--ink)}
+.app-title span{color:var(--s)}
+.xp-block{text-align:right;flex-shrink:0;padding-bottom:2px}
+.xp-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--s);line-height:1;letter-spacing:-1px;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1)}
+.xp-num.bump{animation:xpbump 0.4s cubic-bezier(0.22,1,0.36,1)}
+@keyframes xpbump{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
+.xp-lbl{font-family:'Syne Mono',monospace;font-size:9px;color:var(--ink2);letter-spacing:2px;text-transform:uppercase}
+
+.lv-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+.lv-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--s);color:var(--s-dk);padding:4px 12px;border-radius:100px;flex-shrink:0;transition:all 0.4s}
+.lv-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.lv-bar-fill{height:100%;background:linear-gradient(90deg,var(--s),#D6FF50);border-radius:3px;transition:width 0.7s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden}
+.lv-bar-fill::after{content:'';position:absolute;top:0;bottom:0;left:-40px;width:40px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent);animation:sheen 2.5s ease-in-out infinite}
+@keyframes sheen{0%{left:-40px}100%{left:110%}}
+.lv-next{font-family:'Syne Mono',monospace;font-size:9px;color:var(--ink3);flex-shrink:0}
+
+/* TABS */
+.tabs{display:flex;gap:6px;padding:14px 20px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--ink2);white-space:nowrap;flex-shrink:0;transition:all 0.2s cubic-bezier(0.22,1,0.36,1)}
+.tab-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tab[data-cat="all"] .tab-dot{background:var(--ink2)}
+.tab[data-cat="small"] .tab-dot{background:var(--s)}
+.tab[data-cat="medium"] .tab-dot{background:var(--m)}
+.tab[data-cat="big"] .tab-dot{background:var(--b)}
+.tab[data-cat="all"].active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[data-cat="small"].active{background:var(--s);color:var(--s-dk);border-color:var(--s)}
+.tab[data-cat="medium"].active{background:var(--m);color:var(--m-dk);border-color:var(--m)}
+.tab[data-cat="big"].active{background:var(--b);color:var(--b-dk);border-color:var(--b)}
+.tab.active .tab-dot{background:currentColor;opacity:0.4}
+.tab-cnt{font-size:10px;opacity:0.65}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;padding:0 12px calc(var(--safe-bottom) + 32px);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+
+/* SECTION */
+.sec-head{display:flex;align-items:center;gap:10px;padding:16px 8px 8px;position:sticky;top:0;background:var(--bg);z-index:2}
+.sec-label{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.sec-label.small{color:var(--s)}.sec-label.medium{color:var(--m)}.sec-label.big{color:var(--b)}
+.sec-tally{font-family:'Syne Mono',monospace;font-size:11px;color:var(--ink3)}
+.sec-line{flex:1;height:1px;background:var(--border)}
+
+/* TASK CARD */
+.task{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;overflow:hidden;position:relative;animation:fadeup 0.4s cubic-bezier(0.22,1,0.36,1) both}
+@keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.task:active{transform:scale(0.98)}
+.task.done{opacity:0.45}
+.task.slam{animation:slam 0.3s cubic-bezier(0.22,1,0.36,1)}
+@keyframes slam{0%{transform:scale(1)}40%{transform:scale(0.96)}100%{transform:scale(1)}}
+
+/* left accent stripe */
+.task::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 2px 2px 0;opacity:0.8;transition:opacity 0.3s}
+.task[data-cat="small"]::before{background:var(--s)}
+.task[data-cat="medium"]::before{background:var(--m)}
+.task[data-cat="big"]::before{background:var(--b)}
+.task.done::before{opacity:0.1}
+
+.task-main{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 18px;cursor:pointer;user-select:none}
+
+/* CHECK */
+.chk{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:border-color 0.3s}
+.chk-fill{position:absolute;inset:0;border-radius:50%;transform:scale(0);transition:transform 0.35s cubic-bezier(0.22,1,0.36,1)}
+.task[data-cat="small"] .chk-fill{background:var(--s)}
+.task[data-cat="medium"] .chk-fill{background:var(--m)}
+.task[data-cat="big"] .chk-fill{background:var(--b)}
+.chk svg{width:14px;height:14px;position:relative;z-index:1;opacity:0;transform:scale(0.3) rotate(-20deg);transition:all 0.3s cubic-bezier(0.22,1,0.36,1)}
+.task.done .chk{border-color:transparent}
+.task.done .chk-fill{transform:scale(1)}
+.task.done .chk svg{opacity:1;transform:scale(1) rotate(0)}
+
+.task-body{flex:1;min-width:0}
+.task-name{font-size:15px;font-weight:700;line-height:1.3;transition:color 0.2s}
+.task.done .task-name{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--ink3)}
+.task-tags{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
+
+.xp-tag{font-family:'Syne Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:0.3px}
+.task[data-cat="small"] .xp-tag{background:rgba(184,240,74,0.1);color:var(--s)}
+.task[data-cat="medium"] .xp-tag{background:rgba(255,210,63,0.1);color:var(--m)}
+.task[data-cat="big"] .xp-tag{background:rgba(255,92,53,0.1);color:var(--b)}
+.task.done .xp-tag{opacity:0.3}
+
+.dl-tag{font-family:'Syne Mono',monospace;font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(255,92,53,0.15);color:var(--b)}
+.steps-tag{font-size:11px;color:var(--ink3)}
+
+.exp-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--ink3);flex-shrink:0;background:transparent;border:none;cursor:pointer;padding:0;transition:all 0.2s}
+.exp-btn:hover{background:var(--card2);color:var(--ink2)}
+.exp-btn.open{transform:rotate(180deg)}
+.exp-btn svg{width:16px;height:16px}
+
+/* PROGRESS BAR */
+.task-prog{margin:0 16px 12px 18px;display:flex;align-items:center;gap:8px}
+.task-prog-bar{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.task-prog-fill{height:100%;border-radius:2px;transition:width 0.5s cubic-bezier(0.22,1,0.36,1)}
+.task[data-cat="small"] .task-prog-fill{background:var(--s)}
+.task[data-cat="medium"] .task-prog-fill{background:var(--m)}
+.task[data-cat="big"] .task-prog-fill{background:var(--b)}
+.task-prog-lbl{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink3);flex-shrink:0}
+
+/* SUBTASKS */
+.subtasks{border-top:1px solid var(--border);background:var(--card2);display:none}
+.subtasks.open{display:block}
+.sub{display:flex;align-items:center;gap:10px;padding:11px 14px 11px 40px;cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s}
+.sub:last-child{border-bottom:none}
+.sub:active{background:var(--border)}
+.sub-chk{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:border-color 0.2s}
+.sub-chk-fill{position:absolute;inset:0;transform:scale(0);transition:transform 0.2s cubic-bezier(0.22,1,0.36,1)}
+.task[data-cat="small"] .sub-chk-fill{background:var(--s)}
+.task[data-cat="medium"] .sub-chk-fill{background:var(--m)}
+.task[data-cat="big"] .sub-chk-fill{background:var(--b)}
+.sub-chk svg{width:10px;height:10px;position:relative;z-index:1;opacity:0;transition:opacity 0.2s}
+.sub.done .sub-chk{border-color:transparent}
+.sub.done .sub-chk-fill{transform:scale(1)}
+.sub.done .sub-chk svg{opacity:1}
+.sub-name{font-size:13px;font-weight:600;color:var(--ink2);flex:1;transition:color 0.2s}
+.sub.done .sub-name{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--ink3)}
+
+/* CONFETTI */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:500}
+
+/* CELEBRATION POP */
+.pop{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,13,0.97);z-index:600;opacity:0;pointer-events:none;transition:opacity 0.35s;padding:32px}
+.pop.show{opacity:1;pointer-events:all}
+.pop-emoji{font-size:80px;animation:bigpop 0.5s cubic-bezier(0.22,1,0.36,1) both;line-height:1;margin-bottom:16px}
+@keyframes bigpop{from{transform:scale(0.2) rotate(-20deg);opacity:0}60%{transform:scale(1.15) rotate(4deg)}to{transform:scale(1) rotate(0);opacity:1}}
+.pop-title{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:-1.5px;text-align:center;margin-bottom:10px;line-height:1}
+.pop-msg{color:var(--ink2);font-size:15px;text-align:center;line-height:1.6;margin-bottom:20px}
+.pop-xp{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--s);margin-bottom:32px;letter-spacing:-0.5px}
+.pop-btn{padding:14px 40px;background:var(--ink);color:var(--bg);border-radius:100px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;letter-spacing:0.3px}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--safe-bottom) + 24px);left:50%;transform:translateX(-50%) translateY(80px);background:var(--card2);border:1px solid var(--border);color:var(--ink2);padding:10px 20px;border-radius:100px;font-family:'Syne Mono',monospace;font-size:12px;white-space:nowrap;z-index:700;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="hdr">
+  <div class="hdr-eye">Matt &amp; Wife · Cape Town · 2026</div>
+  <div class="hdr-row">
+    <div class="app-title">THE<br><span>HOUSE</span></div>
+    <div class="xp-block">
+      <div class="xp-num" id="xp-num">0</div>
+      <div class="xp-lbl">XP Earned</div>
+    </div>
+  </div>
+  <div class="lv-row">
+    <div class="lv-badge" id="lv-badge">LEVEL 1</div>
+    <div class="lv-bar-wrap"><div class="lv-bar-fill" id="lv-bar" style="width:0%"></div></div>
+    <div class="lv-next" id="lv-next">0/100</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-cat="all"><span class="tab-dot"></span>All <span class="tab-cnt" id="cnt-all"></span></button>
+  <button class="tab" data-cat="small"><span class="tab-dot"></span>Quick wins <span class="tab-cnt" id="cnt-small"></span></button>
+  <button class="tab" data-cat="medium"><span class="tab-dot"></span>Projects <span class="tab-cnt" id="cnt-medium"></span></button>
+  <button class="tab" data-cat="big"><span class="tab-dot"></span>Boss levels <span class="tab-cnt" id="cnt-big"></span></button>
+</div>
+
+<div class="scroll" id="scroll"></div>
+
+<div class="pop" id="pop">
+  <div class="pop-emoji" id="pop-emoji">🎉</div>
+  <div class="pop-title" id="pop-title">Done!</div>
+  <div class="pop-msg" id="pop-msg"></div>
+  <div class="pop-xp" id="pop-xp">+0 XP</div>
+  <button class="pop-btn" onclick="closePop()">Keep going →</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const XP_VAL = {small:25,medium:75,big:200};
+const LEVELS = [
+  {name:'LEVEL 1',min:0,max:100},{name:'LEVEL 2',min:100,max:300},
+  {name:'LEVEL 3',min:300,max:600},{name:'LEVEL 4',min:600,max:1000},
+  {name:'LEVEL 5',min:1000,max:1500},{name:'LEVEL 6',min:1500,max:2200},
+  {name:'HOMEOWNERS',min:2200,max:9999},
+];
+const MSGS = {
+  small:['Quick win. One less thing on the list.','Look at you go.','Snappy. Done.','Fast hands, fast house.','Small task, real progress.'],
+  medium:['That was a proper job. Nice one.','Medium effort, major satisfaction.','That\'s the one that was bugging you. Gone.','Project closed. Feels good, right?','Halfway through something real.'],
+  big:['MASSIVE. That was a whole thing and you did it.','Boss level cleared. The house bows to you.','That one was no joke. Seriously well done.','Big project, bigger energy. Nailed it.','200 XP hits different when you actually did the work.'],
+};
+const EMOJIS = {small:['⚡','🎯','✅','💥','✨'],medium:['🏆','🔥','💪','⭐','🎉'],big:['👑','🚀','💎','🏠','🎊']};
+
+const TASKS = [
+  {id:'t1',name:'Hanging up mirrors',cat:'small',subtasks:[]},
+  {id:'t2',name:'Replacing all light switch and plug covers',cat:'small',subtasks:[]},
+  {id:'t3',name:'Changing all handles in kitchen',cat:'small',subtasks:[]},
+  {id:'t4',name:'Organising and rehanging paintings',cat:'small',subtasks:[]},
+  {id:'t5',name:'Organise small TV room',cat:'small',subtasks:[]},
+  {id:'t6',name:'Reorganise the shed',cat:'small',subtasks:[]},
+  {id:'t7',name:'Get rid of old telephone and unnecessary wiring',cat:'small',subtasks:[]},
+  {id:'t8',name:'Fix front gate',cat:'small',subtasks:[]},
+  {id:'t9',name:'Refilm the windows',cat:'small',subtasks:[]},
+  {id:'t10',name:'Replace 2 rotted shelves in kitchen cupboard',cat:'small',subtasks:[]},
+  {id:'t11',name:'Purchase and install doggy door',cat:'medium',subtasks:[{id:'s1',name:'Measure and choose door location'},{id:'s2',name:'Source and purchase doggy door'},{id:'s3',name:'Install'}]},
+  {id:'t12',name:'Set up both offices',cat:'medium',subtasks:[{id:'s4',name:"Set up Matt's studio — sell leftover panels"},{id:'s5',name:'Set up second office'}]},
+  {id:'t13',name:'Sell antique couch set',cat:'medium',subtasks:[{id:'s6',name:'Photograph and list online'},{id:'s7',name:'Organise buyer collection'}]},
+  {id:'t14',name:'Sell water filter, dishwasher, washing machine',cat:'medium',subtasks:[{id:'s8',name:'List water filter'},{id:'s9',name:'List dishwasher'},{id:'s10',name:'List washing machine'}]},
+  {id:'t15',name:'New intercom and doorbell',cat:'medium',subtasks:[]},
+  {id:'t16',name:'Upgrade alarm system',cat:'medium',subtasks:[{id:'s11',name:'Get quotes from security companies'},{id:'s12',name:'Choose system and book install'}]},
+  {id:'t17',name:'Painting the tile floors',cat:'medium',subtasks:[{id:'s13',name:'Prep and clean tiles'},{id:'s14',name:'Apply primer coat'},{id:'s15',name:'Apply final coat(s)'}]},
+  {id:'t18',name:'Repaint outdoor pool tiles darker',cat:'medium',subtasks:[{id:'s16',name:'Prep pool surround'},{id:'s17',name:'Paint tiles'}]},
+  {id:'t19',name:'Excavate aloes and succulents to lay grass',cat:'medium',subtasks:[{id:'s18',name:'Remove plants'},{id:'s19',name:'Level and prepare ground'},{id:'s20',name:'Lay turf or seed'}]},
+  {id:'t20',name:'Replace wood barriers with stone pavers',cat:'medium',subtasks:[]},
+  {id:'t21',name:'Install 3m wooden slats for short wall',cat:'medium',subtasks:[{id:'s21',name:'Source and purchase timber slats'},{id:'s22',name:'Install slats'}]},
+  {id:'t22',name:'Set up guest room',cat:'medium',deadline:'Nov 2026',subtasks:[{id:'s23',name:'Source and buy a bed if needed'},{id:'s24',name:'Furnish and style room'},{id:'s25',name:'Bedding and guest essentials'}]},
+  {id:'t23',name:'Design and build new headboard',cat:'medium',subtasks:[{id:'s26',name:'Design and choose materials'},{id:'s27',name:'Build or commission'},{id:'s28',name:'Install'}]},
+  {id:'t24',name:'Acoustic panelling for lounge wall',cat:'medium',subtasks:[{id:'s29',name:'Source panel supplier'},{id:'s30',name:'Design wall layout'},{id:'s31',name:'Install panels'}]},
+  {id:'t25',name:'Replace all blinds and curtains',cat:'big',subtasks:[{id:'s32',name:'Measure all windows'},{id:'s33',name:'Choose style and fabric'},{id:'s34',name:'Order and purchase'},{id:'s35',name:'Install throughout'}]},
+  {id:'t26',name:'Replace all toilets',cat:'big',subtasks:[{id:'s36',name:'Choose replacement units'},{id:'s37',name:'Source plumber'},{id:'s38',name:'Install en-suite'},{id:'s39',name:'Install all bathrooms'}]},
+  {id:'t27',name:'Buy a couch',cat:'big',subtasks:[{id:'s40',name:'Measure lounge and set budget'},{id:'s41',name:'Shop and choose'},{id:'s42',name:'Order and take delivery'}]},
+  {id:'t28',name:'Replace all doors and door handles',cat:'big',subtasks:[{id:'s43',name:'Measure and quote all doors'},{id:'s44',name:'Source doors and handles'},{id:'s45',name:'Install throughout'}]},
+  {id:'t29',name:'Benedict — finish all indoor and outdoor lights',cat:'big',subtasks:[{id:'s46',name:'Confirm outstanding fixtures with Benedict'},{id:'s47',name:'Source remaining lights'},{id:'s48',name:'Complete installation'}]},
+  {id:'t30',name:'Sand and varnish kitchen cabinets',cat:'big',subtasks:[{id:'s49',name:'Sand all cabinet faces and doors'},{id:'s50',name:'Apply stain or varnish — coat 1'},{id:'s51',name:'Light sand and final coat'}]},
+  {id:'t31',name:'Replace shower unit in en-suite',cat:'big',subtasks:[{id:'s52',name:'Choose shower unit'},{id:'s53',name:'Source plumber/installer'},{id:'s54',name:'Remove old unit'},{id:'s55',name:'Install new unit'}]},
+  {id:'t32',name:'Redesign tiny bathroom',cat:'big',subtasks:[{id:'s56',name:'Design — wallpaper, sink, toilet'},{id:'s57',name:'Source all materials'},{id:'s58',name:'Plumbing and tiling'},{id:'s59',name:'Paint and wallpaper'},{id:'s60',name:'Final fit-out'}]},
+  {id:'t33',name:'Add glass barrier around pool',cat:'big',subtasks:[{id:'s61',name:'Get structural quotes'},{id:'s62',name:'Choose glass system'},{id:'s63',name:'Install'}]},
+  {id:'t34',name:'Rewire and fit new pool light',cat:'big',subtasks:[{id:'s64',name:'Source electrician'},{id:'s65',name:'Rewire and install'}]},
+  {id:'t35',name:'Finish upgrading garage and workshop',cat:'big',subtasks:[{id:'s66',name:'Clear and organise contents'},{id:'s67',name:'Install shelving and workbench'},{id:'s68',name:'Final finishing touches'}]},
+  {id:'t36',name:'Replace Perspex windows with glass — kitchen',cat:'big',subtasks:[{id:'s69',name:'Get quotes from glaziers'},{id:'s70',name:'Confirm specs and order'},{id:'s71',name:'Install'}]},
+  {id:'t37',name:'Take out the toxic trees',cat:'big',subtasks:[{id:'s72',name:'Identify all trees to remove'},{id:'s73',name:'Source arborist/tree feller'},{id:'s74',name:'Remove and clear debris'}]},
+  {id:'t38',name:'Purchase and install solar panels and battery',cat:'big',subtasks:[{id:'s75',name:'Get quotes from solar installers'},{id:'s76',name:'Choose system and sign contract'},{id:'s77',name:'Installation day'},{id:'s78',name:'Commission and sign off'}]},
+  {id:'t39',name:'Build the scullery and laundry cupboard',cat:'big',subtasks:[{id:'s79',name:'Design layout and dimensions'},{id:'s80',name:'Source carpenter or materials'},{id:'s81',name:'Build and install'},{id:'s82',name:'Paint and finish'}]},
+];
+
+const KEY='house-v3';
+let ST=(() => {try{return JSON.parse(localStorage.getItem(KEY))||{};}catch{return{}}})();
+let tab='all';
+
+function save(){localStorage.setItem(KEY,JSON.stringify(ST))}
+function done(t){return t.subtasks.length===0?!!ST[t.id]:t.subtasks.every(s=>!!ST[s.id])}
+function prog(t){if(!t.subtasks.length)return null;const d=t.subtasks.filter(s=>!!ST[s.id]).length;return{d,n:t.subtasks.length}}
+function totalXP(){return TASKS.reduce((s,t)=>s+(done(t)?XP_VAL[t.cat]:0),0)}
+function getLevel(xp){return LEVELS.slice().reverse().find(l=>xp>=l.min)||LEVELS[0]}
+
+function updateHUD(){
+  const xp=totalXP();
+  const lv=getLevel(xp);
+  const next=LEVELS[LEVELS.indexOf(lv)+1]||lv;
+  const pct=lv===next?100:Math.round(((xp-lv.min)/(next.min-lv.min))*100);
+  document.getElementById('xp-num').textContent=xp.toLocaleString();
+  document.getElementById('lv-bar').style.width=pct+'%';
+  document.getElementById('lv-badge').textContent=lv.name;
+  document.getElementById('lv-next').textContent=xp+'/'+next.min;
+  ['small','medium','big'].forEach(c=>{
+    const ts=TASKS.filter(t=>t.cat===c);
+    const d=ts.filter(t=>done(t)).length;
+    const el=document.getElementById('cnt-'+c);
+    if(el)el.textContent=d+'/'+ts.length;
+  });
+  const allD=TASKS.filter(t=>done(t)).length;
+  const ae=document.getElementById('cnt-all');
+  if(ae)ae.textContent=allD+'/'+TASKS.length;
+}
+
+// CONFETTI
+const cv=document.getElementById('confetti');
+const cx=cv.getContext('2d');
+let parts=[];
+function resize(){cv.width=window.innerWidth;cv.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+const COLS=['#B8F04A','#FFD23F','#FF5C35','#F0EAD6','#80CFFF','#FF8FD0'];
+function spawnAt(x,y,n){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,sp=5+Math.random()*9;
+    parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-7,col:COLS[Math.floor(Math.random()*COLS.length)],sz:4+Math.random()*6,rot:Math.random()*360,rv:(Math.random()-0.5)*14,life:1,dc:0.013+Math.random()*0.01,sh:Math.random()>0.5});
+  }
+}
+let rafId=null;
+function animC(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts=parts.filter(p=>p.life>0);
+  parts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;p.vy+=0.28;p.vx*=0.98;p.rot+=p.rv;p.life-=p.dc;
+    cx.save();cx.globalAlpha=p.life;cx.fillStyle=p.col;cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);
+    if(p.sh){cx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz*0.55)}
+    else{cx.beginPath();cx.arc(0,0,p.sz/2,0,Math.PI*2);cx.fill()}
+    cx.restore();
+  });
+  if(parts.length>0)rafId=requestAnimationFrame(animC);else rafId=null;
+}
+function boom(x,y,n){spawnAt(x,y,n);if(!rafId)animC();}
+
+// TOAST
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// POP
+function showPop(t){
+  const em=EMOJIS[t.cat];const msgs=MSGS[t.cat];
+  document.getElementById('pop-emoji').textContent=em[Math.floor(Math.random()*em.length)];
+  document.getElementById('pop-title').textContent=t.cat==='big'?'BOSS CLEARED!':t.cat==='medium'?'PROJECT DONE!':'QUICK WIN!';
+  document.getElementById('pop-msg').textContent=msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('pop-xp').textContent='+'+XP_VAL[t.cat]+' XP';
+  document.getElementById('pop').classList.add('show');
+  boom(window.innerWidth/2,window.innerHeight*0.4,t.cat==='big'?90:t.cat==='medium'?55:28);
+}
+function closePop(){document.getElementById('pop').classList.remove('show')}
+
+// RENDER
+function renderTask(t,i){
+  const d=done(t);const pr=prog(t);const hasSubs=t.subtasks.length>0;
+  const isOpen=!!ST['o_'+t.id];
+  const barPct=pr?Math.round((pr.d/pr.n)*100):(d?100:0);
+  const delay=Math.min(i*35,280);
+
+  const tags=`<span class="xp-tag">+${XP_VAL[t.cat]}xp</span>${pr?`<span class="steps-tag">${pr.d}/${pr.n} steps</span>`:''}${t.deadline?`<span class="dl-tag">Before ${t.deadline}</span>`:''}`;
+  const expBtn=hasSubs?`<button class="exp-btn${isOpen?' open':''}" onclick="togExp('${t.id}',event)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4,6 8,10 12,6"/></svg></button>`:'';
+  const progBar=hasSubs?`<div class="task-prog"><div class="task-prog-bar"><div class="task-prog-fill" id="pb-${t.id}" style="width:${barPct}%"></div></div><div class="task-prog-lbl" id="pl-${t.id}">${barPct}%</div></div>`:'';
+  const subHtml=hasSubs?`<div class="subtasks${isOpen?' open':''}" id="subs-${t.id}">${t.subtasks.map(s=>{
+    const sd=!!ST[s.id];
+    return `<div class="sub${sd?' done':''}" onclick="togSub('${t.id}','${s.id}')"><div class="sub-chk"><div class="sub-chk-fill"></div><svg viewBox="0 0 10 10" fill="none" stroke="var(--bg)" stroke-width="2"><polyline points="2,5 4,7.5 8,3"/></svg></div><span class="sub-name">${s.name}</span></div>`;
+  }).join('')}</div>`:'';
+
+  return `<div class="task${d?' done':''}" id="tk-${t.id}" data-cat="${t.cat}" style="animation-delay:${delay}ms">
+    <div class="task-main" onclick="togTask('${t.id}')">
+      <div class="chk" id="chk-${t.id}"><div class="chk-fill"></div><svg viewBox="0 0 14 14" fill="none" stroke="var(--bg)" stroke-width="2.5"><polyline points="2.5,7 5.5,10 11.5,4"/></svg></div>
+      <div class="task-body"><div class="task-name">${t.name}</div><div class="task-tags">${tags}</div></div>
+      ${expBtn}
+    </div>
+    ${progBar}${subHtml}
+  </div>`;
+}
+
+function renderSection(cat,label,tasks){
+  const d=tasks.filter(t=>done(t)).length;
+  return `<div class="sec-head"><span class="sec-label ${cat}">${label}</span><span class="sec-tally">${d}/${tasks.length}</span><div class="sec-line"></div></div>${tasks.map((t,i)=>renderTask(t,i)).join('')}`;
+}
+
+function render(){
+  const el=document.getElementById('scroll');
+  const cats={small:'Quick wins',medium:'Projects',big:'Boss levels'};
+  let html='';
+  if(tab==='all'){Object.entries(cats).forEach(([c,l])=>{html+=renderSection(c,l,TASKS.filter(t=>t.cat===c))})}
+  else{html+=renderSection(tab,cats[tab],TASKS.filter(t=>t.cat===tab))}
+  el.innerHTML=html;
+  updateHUD();
+}
+
+function togTask(id){
+  const t=TASKS.find(x=>x.id===id);if(!t)return;
+  if(t.subtasks.length>0){togExp(id,null);return;}
+  const was=!!ST[id];ST[id]=!was;save();
+  const el=document.getElementById('tk-'+id);
+  if(el){el.classList.toggle('done',!!ST[id]);el.classList.remove('slam');void el.offsetWidth;el.classList.add('slam')}
+  if(!was){
+    const r=document.getElementById('tk-'+id)?.getBoundingClientRect();
+    if(r)boom(r.left+r.width/2,r.top+r.height/2,t.cat==='big'?60:30);
+    setTimeout(()=>showPop(t),150);
+  } else {toast('unchecked — no worries')}
+  updateHUD();
+}
+
+function togSub(tid,sid){
+  const t=TASKS.find(x=>x.id===tid);const was=done(t);
+  ST[sid]=!ST[sid];save();
+  const subEl=document.querySelector(`[onclick="togSub('${tid}','${sid}')"]`);
+  if(subEl)subEl.classList.toggle('done',!!ST[sid]);
+  const pr=prog(t);
+  if(pr){
+    const pct=Math.round((pr.d/pr.n)*100);
+    const pb=document.getElementById('pb-'+tid);const pl=document.getElementById('pl-'+tid);
+    if(pb)pb.style.width=pct+'%';if(pl)pl.textContent=pct+'%';
+    const meta=document.querySelector('#tk-'+tid+' .steps-tag');
+    if(meta)meta.textContent=`${pr.d}/${pr.n} steps`;
+  }
+  const nowDone=done(t);const tEl=document.getElementById('tk-'+tid);
+  if(tEl)tEl.classList.toggle('done',nowDone);
+  if(ST[sid]){
+    const r=subEl?.getBoundingClientRect();
+    if(r)boom(r.left+r.width/2,r.top+r.height/2,16);
+    if(nowDone&&!was)setTimeout(()=>showPop(t),150);
+    else toast('+step done');
+  }
+  updateHUD();
+}
+
+function togExp(id,e){
+  if(e)e.stopPropagation();
+  ST['o_'+id]=!ST['o_'+id];save();
+  document.getElementById('subs-'+id)?.classList.toggle('open',!!ST['o_'+id]);
+  document.querySelector(`[onclick="togExp('${id}',event)"]`)?.classList.toggle('open',!!ST['o_'+id]);
+}
+
+document.getElementById('tabs').addEventListener('click',e=>{
+  const pill=e.target.closest('.tab');if(!pill)return;
+  tab=pill.dataset.cat;
+  document.querySelectorAll('.tab').forEach(p=>p.classList.toggle('active',p===pill));
+  render();
+});
+
+render();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
