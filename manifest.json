@@ -1,11 +1,12 @@
 {
-  "name": "House Projects",
-  "short_name": "House",
+  "name": "Cohen-Halls Home",
+  "short_name": "The House",
   "description": "Track all our home projects",
-  "start_url": "/",
+  "start_url": "/house/",
+  "scope": "/house/",
   "display": "standalone",
-  "background_color": "#F5F0E8",
-  "theme_color": "#1A1A18",
+  "background_color": "#0D0D0D",
+  "theme_color": "#0D0D0D",
   "orientation": "portrait",
   "icons": [
     {
