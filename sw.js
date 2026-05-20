@@ -1,5 +1,11 @@
-const CACHE = 'house-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'house-v2';
+const ASSETS = [
+  '/house/',
+  '/house/index.html',
+  '/house/manifest.json',
+  '/house/icon-192.png',
+  '/house/icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));

@@ -14,13 +14,8 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0D0D0D;
-  --card:#161616;
-  --card2:#1C1C1C;
-  --ink:#F0EAD6;
-  --ink2:#807870;
-  --ink3:#3E3C38;
-  --border:#252320;
+  --bg:#0D0D0D;--card:#161616;--card2:#1C1C1C;
+  --ink:#F0EAD6;--ink2:#807870;--ink3:#3E3C38;--border:#252320;
   --s:#B8F04A;--s-dk:#0D0D0D;
   --m:#FFD23F;--m-dk:#0D0D0D;
   --b:#FF5C35;--b-dk:#0D0D0D;
@@ -29,22 +24,24 @@
 }
 html,body{height:100%;overflow:hidden;background:var(--bg)}
 body{font-family:'Nunito',sans-serif;color:var(--ink);display:flex;flex-direction:column;max-width:480px;margin:0 auto;position:relative}
-
-/* grain */
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.35}
 
 /* HEADER */
 .hdr{padding:calc(var(--safe-top) + 18px) 20px 0;flex-shrink:0}
-.hdr-eye{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.hdr-eye{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink2);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--ink3);flex-shrink:0;transition:background 0.3s}
+.sync-dot.synced{background:var(--s)}
+.sync-dot.syncing{background:var(--m);animation:pulse-dot 0.8s ease-in-out infinite}
+.sync-dot.error{background:var(--b)}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:0.3}}
 .hdr-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
 .app-title{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;letter-spacing:-2px;line-height:0.9;color:var(--ink)}
 .app-title span{color:var(--s)}
 .xp-block{text-align:right;flex-shrink:0;padding-bottom:2px}
-.xp-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--s);line-height:1;letter-spacing:-1px;transition:transform 0.3s cubic-bezier(0.22,1,0.36,1)}
+.xp-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--s);line-height:1;letter-spacing:-1px}
 .xp-num.bump{animation:xpbump 0.4s cubic-bezier(0.22,1,0.36,1)}
 @keyframes xpbump{0%{transform:scale(1)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
 .xp-lbl{font-family:'Syne Mono',monospace;font-size:9px;color:var(--ink2);letter-spacing:2px;text-transform:uppercase}
-
 .lv-row{display:flex;align-items:center;gap:10px;margin-top:14px}
 .lv-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--s);color:var(--s-dk);padding:4px 12px;border-radius:100px;flex-shrink:0;transition:all 0.4s}
 .lv-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
@@ -56,7 +53,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 /* TABS */
 .tabs{display:flex;gap:6px;padding:14px 20px 8px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
 .tabs::-webkit-scrollbar{display:none}
-.tab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--ink2);white-space:nowrap;flex-shrink:0;transition:all 0.2s cubic-bezier(0.22,1,0.36,1)}
+.tab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:100px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--ink2);white-space:nowrap;flex-shrink:0;transition:all 0.2s cubic-bezier(0.22,1,0.36,1);font-family:'Nunito',sans-serif}
 .tab-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .tab[data-cat="all"] .tab-dot{background:var(--ink2)}
 .tab[data-cat="small"] .tab-dot{background:var(--s)}
@@ -80,21 +77,18 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .sec-tally{font-family:'Syne Mono',monospace;font-size:11px;color:var(--ink3)}
 .sec-line{flex:1;height:1px;background:var(--border)}
 
-/* TASK CARD */
+/* TASK */
 .task{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:8px;overflow:hidden;position:relative;animation:fadeup 0.4s cubic-bezier(0.22,1,0.36,1) both}
 @keyframes fadeup{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .task:active{transform:scale(0.98)}
 .task.done{opacity:0.45}
 .task.slam{animation:slam 0.3s cubic-bezier(0.22,1,0.36,1)}
 @keyframes slam{0%{transform:scale(1)}40%{transform:scale(0.96)}100%{transform:scale(1)}}
-
-/* left accent stripe */
 .task::before{content:'';position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 2px 2px 0;opacity:0.8;transition:opacity 0.3s}
 .task[data-cat="small"]::before{background:var(--s)}
 .task[data-cat="medium"]::before{background:var(--m)}
 .task[data-cat="big"]::before{background:var(--b)}
 .task.done::before{opacity:0.1}
-
 .task-main{display:flex;align-items:center;gap:12px;padding:14px 14px 14px 18px;cursor:pointer;user-select:none}
 
 /* CHECK */
@@ -107,21 +101,17 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .task.done .chk{border-color:transparent}
 .task.done .chk-fill{transform:scale(1)}
 .task.done .chk svg{opacity:1;transform:scale(1) rotate(0)}
-
 .task-body{flex:1;min-width:0}
 .task-name{font-size:15px;font-weight:700;line-height:1.3;transition:color 0.2s}
 .task.done .task-name{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--ink3)}
 .task-tags{display:flex;align-items:center;gap:5px;margin-top:4px;flex-wrap:wrap}
-
 .xp-tag{font-family:'Syne Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:0.3px}
 .task[data-cat="small"] .xp-tag{background:rgba(184,240,74,0.1);color:var(--s)}
 .task[data-cat="medium"] .xp-tag{background:rgba(255,210,63,0.1);color:var(--m)}
 .task[data-cat="big"] .xp-tag{background:rgba(255,92,53,0.1);color:var(--b)}
 .task.done .xp-tag{opacity:0.3}
-
 .dl-tag{font-family:'Syne Mono',monospace;font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(255,92,53,0.15);color:var(--b)}
 .steps-tag{font-size:11px;color:var(--ink3)}
-
 .exp-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--ink3);flex-shrink:0;background:transparent;border:none;cursor:pointer;padding:0;transition:all 0.2s}
 .exp-btn:hover{background:var(--card2);color:var(--ink2)}
 .exp-btn.open{transform:rotate(180deg)}
@@ -154,10 +144,40 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .sub-name{font-size:13px;font-weight:600;color:var(--ink2);flex:1;transition:color 0.2s}
 .sub.done .sub-name{color:var(--ink3);text-decoration:line-through;text-decoration-color:var(--ink3)}
 
+/* LOADING SCREEN */
+.loading{position:fixed;inset:0;background:var(--bg);z-index:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s}
+.loading.hide{opacity:0;pointer-events:none}
+.loading-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--ink)}
+.loading-title span{color:var(--s)}
+.loading-bar-wrap{width:160px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.loading-bar{height:100%;width:0%;background:var(--s);border-radius:2px;transition:width 0.4s}
+.loading-label{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase}
+
+/* SETUP SCREEN */
+.setup{position:fixed;inset:0;background:var(--bg);z-index:900;display:flex;flex-direction:column;padding:40px 24px calc(var(--safe-bottom)+24px);overflow-y:auto}
+.setup.hide{display:none}
+.setup-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-1.5px;margin-bottom:6px;color:var(--ink)}
+.setup-title span{color:var(--s)}
+.setup-sub{color:var(--ink2);font-size:14px;line-height:1.6;margin-bottom:28px}
+.setup-step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.step-num{font-family:'Syne Mono',monospace;font-size:10px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.step-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.step-body{font-size:13px;color:var(--ink2);line-height:1.6}
+.step-body code{font-family:'Syne Mono',monospace;font-size:12px;background:var(--card2);padding:2px 6px;border-radius:4px;color:var(--s)}
+.step-body a{color:var(--s);text-decoration:none}
+.setup-fields{margin-top:24px}
+.field-label{font-family:'Syne Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.field-input{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--ink);font-family:'Syne Mono',monospace;font-size:13px;margin-bottom:16px;outline:none;transition:border-color 0.2s}
+.field-input:focus{border-color:var(--s)}
+.field-input::placeholder{color:var(--ink3)}
+.setup-btn{width:100%;padding:15px;background:var(--s);color:var(--s-dk);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.3px;margin-top:4px;transition:opacity 0.2s}
+.setup-btn:hover{opacity:0.9}
+.setup-err{font-size:13px;color:var(--b);margin-top:10px;text-align:center;min-height:20px}
+
 /* CONFETTI */
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:500}
 
-/* CELEBRATION POP */
+/* POP */
 .pop{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(13,13,13,0.97);z-index:600;opacity:0;pointer-events:none;transition:opacity 0.35s;padding:32px}
 .pop.show{opacity:1;pointer-events:all}
 .pop-emoji{font-size:80px;animation:bigpop 0.5s cubic-bezier(0.22,1,0.36,1) both;line-height:1;margin-bottom:16px}
@@ -174,10 +194,59 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 </head>
 <body>
 
+<!-- Loading -->
+<div class="loading" id="loading">
+  <div class="loading-title">THE <span>HOUSE</span></div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-label" id="loading-label">Connecting...</div>
+</div>
+
+<!-- Setup screen (shown only if no config saved) -->
+<div class="setup" id="setup">
+  <div class="setup-title">CONNECT<br><span>SUPABASE</span></div>
+  <div class="setup-sub">One-time setup. Takes about 5 minutes. After this, both phones share the same progress automatically.</div>
+
+  <div class="setup-step">
+    <div class="step-num">Step 01</div>
+    <div class="step-title">Create a free Supabase project</div>
+    <div class="step-body">Go to <a href="https://supabase.com" target="_blank">supabase.com</a> → New project. Choose any name and region. Wait for it to finish spinning up (about 1 min).</div>
+  </div>
+
+  <div class="setup-step">
+    <div class="step-num">Step 02</div>
+    <div class="step-title">Create the table</div>
+    <div class="step-body">In your project, go to <strong>SQL Editor</strong> and run this query:<br><br>
+      Run all of these together in the SQL editor:<br><br>
+      <code>create table house_state (id text primary key, state jsonb not null, updated_at timestamptz default now());</code><br><br>
+      <code>alter table house_state enable row level security;</code><br><br>
+      <code>create policy "public_all" on house_state for all using (true) with check (true);</code><br><br>
+      <code>insert into house_state (id, state) values ('main', '{}');</code>
+    </div>
+  </div>
+
+  <div class="setup-step">
+    <div class="step-num">Step 03</div>
+    <div class="step-title">Get your credentials</div>
+    <div class="step-body">Go to <strong>Project Settings → API Keys</strong>. Copy your <strong>Project URL</strong> (from General settings — looks like <code>https://xxxx.supabase.co</code>) and your <strong>Publishable key</strong> (starts with <code>sb_publishable_</code>). Paste them below.</div>
+  </div>
+
+  <div class="setup-fields">
+    <div class="field-label">Supabase Project URL</div>
+    <input class="field-input" id="sb-url" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" spellcheck="false">
+    <div class="field-label">Supabase Anon Key</div>
+    <input class="field-input" id="sb-key" type="text" placeholder="sb_publishable_..." autocomplete="off" spellcheck="false">
+    <button class="setup-btn" onclick="saveConfig()">Connect &amp; Launch →</button>
+    <div class="setup-err" id="setup-err"></div>
+  </div>
+</div>
+
 <canvas id="confetti"></canvas>
 
 <div class="hdr">
-  <div class="hdr-eye">Matt &amp; Wife · Cape Town · 2026</div>
+  <div class="hdr-eye">
+    <span class="sync-dot" id="sync-dot"></span>
+    Cohen-Halls Home · Cape Town · 2026
+  </div>
   <div class="hdr-row">
     <div class="app-title">THE<br><span>HOUSE</span></div>
     <div class="xp-block">
@@ -212,19 +281,117 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 <div class="toast" id="toast"></div>
 
 <script>
-const XP_VAL = {small:25,medium:75,big:200};
+// ── CONFIG ──────────────────────────────────────────────────────────────
+const CFG_KEY = 'house-supabase-cfg';
+
+function loadCfg() {
+  try { return JSON.parse(localStorage.getItem(CFG_KEY)) || null; } catch { return null; }
+}
+
+function saveCfg(url, key) {
+  localStorage.setItem(CFG_KEY, JSON.stringify({ url: url.replace(/\/$/, ''), key }));
+}
+
+// ── SUPABASE API (vanilla fetch, no SDK needed) ──────────────────────────
+let SB_URL = '', SB_KEY = '';
+
+function sbHeaders() {
+  // Supports both new sb_publishable_... keys and legacy JWT anon keys
+  const isNew = SB_KEY.startsWith('sb_');
+  return isNew
+    ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SB_KEY }
+    : { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+}
+
+async function sbGet() {
+  const r = await fetch(`${SB_URL}/rest/v1/house_state?id=eq.main&select=state`, { headers: sbHeaders() });
+  if (!r.ok) throw new Error('fetch failed ' + r.status);
+  const d = await r.json();
+  return d[0]?.state || {};
+}
+
+async function sbSet(state) {
+  const r = await fetch(`${SB_URL}/rest/v1/house_state?id=eq.main`, {
+    method: 'PATCH',
+    headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ state, updated_at: new Date().toISOString() }),
+  });
+  if (!r.ok) throw new Error('save failed ' + r.status);
+}
+
+// Poll for remote changes every 8 seconds
+let pollTimer = null;
+let lastSyncStr = '';
+
+function startPolling() {
+  pollTimer = setInterval(async () => {
+    try {
+      const remote = await sbGet();
+      const remoteStr = JSON.stringify(remote);
+      if (remoteStr !== lastSyncStr && remoteStr !== JSON.stringify(ST)) {
+        ST = remote;
+        lastSyncStr = remoteStr;
+        render();
+        setSyncDot('synced');
+      }
+    } catch { /* silent */ }
+  }, 8000);
+}
+
+// ── SYNC DOT ────────────────────────────────────────────────────────────
+function setSyncDot(state) {
+  const d = document.getElementById('sync-dot');
+  d.className = 'sync-dot ' + state;
+}
+
+// ── LOADING ─────────────────────────────────────────────────────────────
+function setLoading(pct, label) {
+  document.getElementById('loading-bar').style.width = pct + '%';
+  document.getElementById('loading-label').textContent = label;
+}
+
+function hideLoading() {
+  const el = document.getElementById('loading');
+  el.classList.add('hide');
+  setTimeout(() => el.style.display = 'none', 500);
+}
+
+// ── SETUP ────────────────────────────────────────────────────────────────
+async function saveConfig() {
+  const url = document.getElementById('sb-url').value.trim();
+  const key = document.getElementById('sb-key').value.trim();
+  const err = document.getElementById('setup-err');
+  err.textContent = '';
+  if (!url || !url.startsWith('https://')) { err.textContent = 'Enter a valid Supabase URL starting with https://'; return; }
+  if (!key || key.length < 20) { err.textContent = 'That key looks too short — check you copied the full anon key'; return; }
+  err.textContent = 'Testing connection...';
+  SB_URL = url.replace(/\/$/, '');
+  SB_KEY = key;
+  try {
+    await sbGet();
+    saveCfg(SB_URL, SB_KEY);
+    document.getElementById('setup').classList.add('hide');
+    await initApp();
+  } catch (e) {
+    err.textContent = 'Could not connect. Double-check your URL and key, and make sure you ran both SQL queries.';
+    SB_URL = ''; SB_KEY = '';
+  }
+}
+
+// ── GAME DATA ────────────────────────────────────────────────────────────
+const XP_VAL = { small: 25, medium: 75, big: 200 };
 const LEVELS = [
-  {name:'LEVEL 1',min:0,max:100},{name:'LEVEL 2',min:100,max:300},
-  {name:'LEVEL 3',min:300,max:600},{name:'LEVEL 4',min:600,max:1000},
-  {name:'LEVEL 5',min:1000,max:1500},{name:'LEVEL 6',min:1500,max:2200},
-  {name:'HOMEOWNERS',min:2200,max:9999},
+  { name: 'LEVEL 1', min: 0, max: 100 }, { name: 'LEVEL 2', min: 100, max: 300 },
+  { name: 'LEVEL 3', min: 300, max: 600 }, { name: 'LEVEL 4', min: 600, max: 1000 },
+  { name: 'LEVEL 5', min: 1000, max: 1500 }, { name: 'LEVEL 6', min: 1500, max: 2200 },
+  { name: 'HOMEOWNERS', min: 2200, max: 9999 },
 ];
 const MSGS = {
-  small:['Quick win. One less thing on the list.','Look at you go.','Snappy. Done.','Fast hands, fast house.','Small task, real progress.'],
-  medium:['That was a proper job. Nice one.','Medium effort, major satisfaction.','That\'s the one that was bugging you. Gone.','Project closed. Feels good, right?','Halfway through something real.'],
-  big:['MASSIVE. That was a whole thing and you did it.','Boss level cleared. The house bows to you.','That one was no joke. Seriously well done.','Big project, bigger energy. Nailed it.','200 XP hits different when you actually did the work.'],
+  small: ['Quick win. One less thing on the list.', 'Look at you go.', 'Snappy. Done.', 'Fast hands, fast house.', 'Small task, real progress.'],
+  medium: ['That was a proper job. Nice one.', 'Medium effort, major satisfaction.', "That's the one that was bugging you. Gone.", 'Project closed. Feels good, right?', 'Halfway through something real.'],
+  big: ['MASSIVE. That was a whole thing and you did it.', 'Boss level cleared. The house bows to you.', 'That one was no joke. Seriously well done.', 'Big project, bigger energy. Nailed it.', '200 XP hits different when you actually did the work.'],
 };
-const EMOJIS = {small:['⚡','🎯','✅','💥','✨'],medium:['🏆','🔥','💪','⭐','🎉'],big:['👑','🚀','💎','🏠','🎊']};
+const EMOJIS = { small: ['⚡', '🎯', '✅', '💥', '✨'], medium: ['🏆', '🔥', '💪', '⭐', '🎉'], big: ['👑', '🚀', '💎', '🏠', '🎊'] };
 
 const TASKS = [
   {id:'t1',name:'Hanging up mirrors',cat:'small',subtasks:[]},
@@ -268,178 +435,228 @@ const TASKS = [
   {id:'t39',name:'Build the scullery and laundry cupboard',cat:'big',subtasks:[{id:'s79',name:'Design layout and dimensions'},{id:'s80',name:'Source carpenter or materials'},{id:'s81',name:'Build and install'},{id:'s82',name:'Paint and finish'}]},
 ];
 
-const KEY='house-v3';
-let ST=(() => {try{return JSON.parse(localStorage.getItem(KEY))||{};}catch{return{}}})();
-let tab='all';
+// ── STATE ────────────────────────────────────────────────────────────────
+let ST = {};
+let tab = 'all';
+let saveTimer = null;
 
-function save(){localStorage.setItem(KEY,JSON.stringify(ST))}
-function done(t){return t.subtasks.length===0?!!ST[t.id]:t.subtasks.every(s=>!!ST[s.id])}
-function prog(t){if(!t.subtasks.length)return null;const d=t.subtasks.filter(s=>!!ST[s.id]).length;return{d,n:t.subtasks.length}}
-function totalXP(){return TASKS.reduce((s,t)=>s+(done(t)?XP_VAL[t.cat]:0),0)}
-function getLevel(xp){return LEVELS.slice().reverse().find(l=>xp>=l.min)||LEVELS[0]}
-
-function updateHUD(){
-  const xp=totalXP();
-  const lv=getLevel(xp);
-  const next=LEVELS[LEVELS.indexOf(lv)+1]||lv;
-  const pct=lv===next?100:Math.round(((xp-lv.min)/(next.min-lv.min))*100);
-  document.getElementById('xp-num').textContent=xp.toLocaleString();
-  document.getElementById('lv-bar').style.width=pct+'%';
-  document.getElementById('lv-badge').textContent=lv.name;
-  document.getElementById('lv-next').textContent=xp+'/'+next.min;
-  ['small','medium','big'].forEach(c=>{
-    const ts=TASKS.filter(t=>t.cat===c);
-    const d=ts.filter(t=>done(t)).length;
-    const el=document.getElementById('cnt-'+c);
-    if(el)el.textContent=d+'/'+ts.length;
-  });
-  const allD=TASKS.filter(t=>done(t)).length;
-  const ae=document.getElementById('cnt-all');
-  if(ae)ae.textContent=allD+'/'+TASKS.length;
+function schedSave() {
+  setSyncDot('syncing');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try {
+      await sbSet(ST);
+      lastSyncStr = JSON.stringify(ST);
+      setSyncDot('synced');
+    } catch {
+      setSyncDot('error');
+      toast('sync failed — will retry');
+      setTimeout(schedSave, 5000);
+    }
+  }, 800);
 }
 
-// CONFETTI
-const cv=document.getElementById('confetti');
-const cx=cv.getContext('2d');
-let parts=[];
-function resize(){cv.width=window.innerWidth;cv.height=window.innerHeight}
-resize();window.addEventListener('resize',resize);
-const COLS=['#B8F04A','#FFD23F','#FF5C35','#F0EAD6','#80CFFF','#FF8FD0'];
-function spawnAt(x,y,n){
-  for(let i=0;i<n;i++){
-    const a=Math.random()*Math.PI*2,sp=5+Math.random()*9;
-    parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-7,col:COLS[Math.floor(Math.random()*COLS.length)],sz:4+Math.random()*6,rot:Math.random()*360,rv:(Math.random()-0.5)*14,life:1,dc:0.013+Math.random()*0.01,sh:Math.random()>0.5});
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function done(t) { return t.subtasks.length === 0 ? !!ST[t.id] : t.subtasks.every(s => !!ST[s.id]); }
+function prog(t) { if (!t.subtasks.length) return null; const d = t.subtasks.filter(s => !!ST[s.id]).length; return { d, n: t.subtasks.length }; }
+function totalXP() { return TASKS.reduce((s, t) => s + (done(t) ? XP_VAL[t.cat] : 0), 0); }
+function getLevel(xp) { return LEVELS.slice().reverse().find(l => xp >= l.min) || LEVELS[0]; }
+
+function updateHUD() {
+  const xp = totalXP();
+  const lv = getLevel(xp);
+  const next = LEVELS[LEVELS.indexOf(lv) + 1] || lv;
+  const pct = lv === next ? 100 : Math.round(((xp - lv.min) / (next.min - lv.min)) * 100);
+  document.getElementById('xp-num').textContent = xp.toLocaleString();
+  document.getElementById('lv-bar').style.width = pct + '%';
+  document.getElementById('lv-badge').textContent = lv.name;
+  document.getElementById('lv-next').textContent = xp + '/' + next.min;
+  ['small', 'medium', 'big'].forEach(c => {
+    const ts = TASKS.filter(t => t.cat === c);
+    const d = ts.filter(t => done(t)).length;
+    const el = document.getElementById('cnt-' + c);
+    if (el) el.textContent = d + '/' + ts.length;
+  });
+  const allD = TASKS.filter(t => done(t)).length;
+  const ae = document.getElementById('cnt-all');
+  if (ae) ae.textContent = allD + '/' + TASKS.length;
+}
+
+// ── CONFETTI ─────────────────────────────────────────────────────────────
+const cv = document.getElementById('confetti');
+const cx2 = cv.getContext('2d');
+let parts = [];
+function resize() { cv.width = window.innerWidth; cv.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const COLS = ['#B8F04A', '#FFD23F', '#FF5C35', '#F0EAD6', '#80CFFF', '#FF8FD0'];
+function spawnAt(x, y, n) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, sp = 5 + Math.random() * 9;
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 7, col: COLS[Math.floor(Math.random() * COLS.length)], sz: 4 + Math.random() * 6, rot: Math.random() * 360, rv: (Math.random() - 0.5) * 14, life: 1, dc: 0.013 + Math.random() * 0.01, sh: Math.random() > 0.5 });
   }
 }
-let rafId=null;
-function animC(){
-  cx.clearRect(0,0,cv.width,cv.height);
-  parts=parts.filter(p=>p.life>0);
-  parts.forEach(p=>{
-    p.x+=p.vx;p.y+=p.vy;p.vy+=0.28;p.vx*=0.98;p.rot+=p.rv;p.life-=p.dc;
-    cx.save();cx.globalAlpha=p.life;cx.fillStyle=p.col;cx.translate(p.x,p.y);cx.rotate(p.rot*Math.PI/180);
-    if(p.sh){cx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz*0.55)}
-    else{cx.beginPath();cx.arc(0,0,p.sz/2,0,Math.PI*2);cx.fill()}
-    cx.restore();
+let rafId = null;
+function animC() {
+  cx2.clearRect(0, 0, cv.width, cv.height);
+  parts = parts.filter(p => p.life > 0);
+  parts.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.28; p.vx *= 0.98; p.rot += p.rv; p.life -= p.dc;
+    cx2.save(); cx2.globalAlpha = p.life; cx2.fillStyle = p.col; cx2.translate(p.x, p.y); cx2.rotate(p.rot * Math.PI / 180);
+    if (p.sh) cx2.fillRect(-p.sz / 2, -p.sz / 2, p.sz, p.sz * 0.55);
+    else { cx2.beginPath(); cx2.arc(0, 0, p.sz / 2, 0, Math.PI * 2); cx2.fill(); }
+    cx2.restore();
   });
-  if(parts.length>0)rafId=requestAnimationFrame(animC);else rafId=null;
+  if (parts.length > 0) rafId = requestAnimationFrame(animC); else rafId = null;
 }
-function boom(x,y,n){spawnAt(x,y,n);if(!rafId)animC();}
+function boom(x, y, n) { spawnAt(x, y, n); if (!rafId) animC(); }
 
-// TOAST
+// ── TOAST ─────────────────────────────────────────────────────────────────
 let toastT;
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2200);
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// POP
-function showPop(t){
-  const em=EMOJIS[t.cat];const msgs=MSGS[t.cat];
-  document.getElementById('pop-emoji').textContent=em[Math.floor(Math.random()*em.length)];
-  document.getElementById('pop-title').textContent=t.cat==='big'?'BOSS CLEARED!':t.cat==='medium'?'PROJECT DONE!':'QUICK WIN!';
-  document.getElementById('pop-msg').textContent=msgs[Math.floor(Math.random()*msgs.length)];
-  document.getElementById('pop-xp').textContent='+'+XP_VAL[t.cat]+' XP';
+// ── POP ───────────────────────────────────────────────────────────────────
+function showPop(t) {
+  const em = EMOJIS[t.cat]; const msgs = MSGS[t.cat];
+  document.getElementById('pop-emoji').textContent = em[Math.floor(Math.random() * em.length)];
+  document.getElementById('pop-title').textContent = t.cat === 'big' ? 'BOSS CLEARED!' : t.cat === 'medium' ? 'PROJECT DONE!' : 'QUICK WIN!';
+  document.getElementById('pop-msg').textContent = msgs[Math.floor(Math.random() * msgs.length)];
+  document.getElementById('pop-xp').textContent = '+' + XP_VAL[t.cat] + ' XP';
   document.getElementById('pop').classList.add('show');
-  boom(window.innerWidth/2,window.innerHeight*0.4,t.cat==='big'?90:t.cat==='medium'?55:28);
+  boom(window.innerWidth / 2, window.innerHeight * 0.4, t.cat === 'big' ? 90 : t.cat === 'medium' ? 55 : 28);
 }
-function closePop(){document.getElementById('pop').classList.remove('show')}
+function closePop() { document.getElementById('pop').classList.remove('show'); }
 
-// RENDER
-function renderTask(t,i){
-  const d=done(t);const pr=prog(t);const hasSubs=t.subtasks.length>0;
-  const isOpen=!!ST['o_'+t.id];
-  const barPct=pr?Math.round((pr.d/pr.n)*100):(d?100:0);
-  const delay=Math.min(i*35,280);
-
-  const tags=`<span class="xp-tag">+${XP_VAL[t.cat]}xp</span>${pr?`<span class="steps-tag">${pr.d}/${pr.n} steps</span>`:''}${t.deadline?`<span class="dl-tag">Before ${t.deadline}</span>`:''}`;
-  const expBtn=hasSubs?`<button class="exp-btn${isOpen?' open':''}" onclick="togExp('${t.id}',event)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4,6 8,10 12,6"/></svg></button>`:'';
-  const progBar=hasSubs?`<div class="task-prog"><div class="task-prog-bar"><div class="task-prog-fill" id="pb-${t.id}" style="width:${barPct}%"></div></div><div class="task-prog-lbl" id="pl-${t.id}">${barPct}%</div></div>`:'';
-  const subHtml=hasSubs?`<div class="subtasks${isOpen?' open':''}" id="subs-${t.id}">${t.subtasks.map(s=>{
-    const sd=!!ST[s.id];
-    return `<div class="sub${sd?' done':''}" onclick="togSub('${t.id}','${s.id}')"><div class="sub-chk"><div class="sub-chk-fill"></div><svg viewBox="0 0 10 10" fill="none" stroke="var(--bg)" stroke-width="2"><polyline points="2,5 4,7.5 8,3"/></svg></div><span class="sub-name">${s.name}</span></div>`;
-  }).join('')}</div>`:'';
-
-  return `<div class="task${d?' done':''}" id="tk-${t.id}" data-cat="${t.cat}" style="animation-delay:${delay}ms">
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderTask(t, i) {
+  const d = done(t); const pr = prog(t); const hasSubs = t.subtasks.length > 0;
+  const isOpen = !!ST['o_' + t.id];
+  const barPct = pr ? Math.round((pr.d / pr.n) * 100) : (d ? 100 : 0);
+  const delay = Math.min(i * 35, 280);
+  const tags = `<span class="xp-tag">+${XP_VAL[t.cat]}xp</span>${pr ? `<span class="steps-tag">${pr.d}/${pr.n} steps</span>` : ''}${t.deadline ? `<span class="dl-tag">Before ${t.deadline}</span>` : ''}`;
+  const expBtn = hasSubs ? `<button class="exp-btn${isOpen ? ' open' : ''}" onclick="togExp('${t.id}',event)"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4,6 8,10 12,6"/></svg></button>` : '';
+  const progBar = hasSubs ? `<div class="task-prog"><div class="task-prog-bar"><div class="task-prog-fill" id="pb-${t.id}" style="width:${barPct}%"></div></div><div class="task-prog-lbl" id="pl-${t.id}">${barPct}%</div></div>` : '';
+  const subHtml = hasSubs ? `<div class="subtasks${isOpen ? ' open' : ''}" id="subs-${t.id}">${t.subtasks.map(s => {
+    const sd = !!ST[s.id];
+    return `<div class="sub${sd ? ' done' : ''}" onclick="togSub('${t.id}','${s.id}')"><div class="sub-chk"><div class="sub-chk-fill"></div><svg viewBox="0 0 10 10" fill="none" stroke="var(--bg)" stroke-width="2"><polyline points="2,5 4,7.5 8,3"/></svg></div><span class="sub-name">${s.name}</span></div>`;
+  }).join('')}</div>` : '';
+  return `<div class="task${d ? ' done' : ''}" id="tk-${t.id}" data-cat="${t.cat}" style="animation-delay:${delay}ms">
     <div class="task-main" onclick="togTask('${t.id}')">
       <div class="chk" id="chk-${t.id}"><div class="chk-fill"></div><svg viewBox="0 0 14 14" fill="none" stroke="var(--bg)" stroke-width="2.5"><polyline points="2.5,7 5.5,10 11.5,4"/></svg></div>
       <div class="task-body"><div class="task-name">${t.name}</div><div class="task-tags">${tags}</div></div>
       ${expBtn}
-    </div>
-    ${progBar}${subHtml}
+    </div>${progBar}${subHtml}
   </div>`;
 }
 
-function renderSection(cat,label,tasks){
-  const d=tasks.filter(t=>done(t)).length;
-  return `<div class="sec-head"><span class="sec-label ${cat}">${label}</span><span class="sec-tally">${d}/${tasks.length}</span><div class="sec-line"></div></div>${tasks.map((t,i)=>renderTask(t,i)).join('')}`;
+function renderSection(cat, label, tasks) {
+  const d = tasks.filter(t => done(t)).length;
+  return `<div class="sec-head"><span class="sec-label ${cat}">${label}</span><span class="sec-tally">${d}/${tasks.length}</span><div class="sec-line"></div></div>${tasks.map((t, i) => renderTask(t, i)).join('')}`;
 }
 
-function render(){
-  const el=document.getElementById('scroll');
-  const cats={small:'Quick wins',medium:'Projects',big:'Boss levels'};
-  let html='';
-  if(tab==='all'){Object.entries(cats).forEach(([c,l])=>{html+=renderSection(c,l,TASKS.filter(t=>t.cat===c))})}
-  else{html+=renderSection(tab,cats[tab],TASKS.filter(t=>t.cat===tab))}
-  el.innerHTML=html;
+function render() {
+  const el = document.getElementById('scroll');
+  const cats = { small: 'Quick wins', medium: 'Projects', big: 'Boss levels' };
+  let html = '';
+  if (tab === 'all') { Object.entries(cats).forEach(([c, l]) => { html += renderSection(c, l, TASKS.filter(t => t.cat === c)); }); }
+  else { html += renderSection(tab, cats[tab], TASKS.filter(t => t.cat === tab)); }
+  el.innerHTML = html;
   updateHUD();
 }
 
-function togTask(id){
-  const t=TASKS.find(x=>x.id===id);if(!t)return;
-  if(t.subtasks.length>0){togExp(id,null);return;}
-  const was=!!ST[id];ST[id]=!was;save();
-  const el=document.getElementById('tk-'+id);
-  if(el){el.classList.toggle('done',!!ST[id]);el.classList.remove('slam');void el.offsetWidth;el.classList.add('slam')}
-  if(!was){
-    const r=document.getElementById('tk-'+id)?.getBoundingClientRect();
-    if(r)boom(r.left+r.width/2,r.top+r.height/2,t.cat==='big'?60:30);
-    setTimeout(()=>showPop(t),150);
-  } else {toast('unchecked — no worries')}
+// ── INTERACTIONS ──────────────────────────────────────────────────────────
+function togTask(id) {
+  const t = TASKS.find(x => x.id === id); if (!t) return;
+  if (t.subtasks.length > 0) { togExp(id, null); return; }
+  const was = !!ST[id]; ST[id] = !was;
+  const el = document.getElementById('tk-' + id);
+  if (el) { el.classList.toggle('done', !!ST[id]); el.classList.remove('slam'); void el.offsetWidth; el.classList.add('slam'); }
+  if (!was) {
+    const r = document.getElementById('tk-' + id)?.getBoundingClientRect();
+    if (r) boom(r.left + r.width / 2, r.top + r.height / 2, t.cat === 'big' ? 60 : 30);
+    setTimeout(() => showPop(t), 150);
+  } else { toast('unchecked — no worries'); }
   updateHUD();
+  schedSave();
 }
 
-function togSub(tid,sid){
-  const t=TASKS.find(x=>x.id===tid);const was=done(t);
-  ST[sid]=!ST[sid];save();
-  const subEl=document.querySelector(`[onclick="togSub('${tid}','${sid}')"]`);
-  if(subEl)subEl.classList.toggle('done',!!ST[sid]);
-  const pr=prog(t);
-  if(pr){
-    const pct=Math.round((pr.d/pr.n)*100);
-    const pb=document.getElementById('pb-'+tid);const pl=document.getElementById('pl-'+tid);
-    if(pb)pb.style.width=pct+'%';if(pl)pl.textContent=pct+'%';
-    const meta=document.querySelector('#tk-'+tid+' .steps-tag');
-    if(meta)meta.textContent=`${pr.d}/${pr.n} steps`;
+function togSub(tid, sid) {
+  const t = TASKS.find(x => x.id === tid); const was = done(t);
+  ST[sid] = !ST[sid];
+  const subEl = document.querySelector(`[onclick="togSub('${tid}','${sid}')"]`);
+  if (subEl) subEl.classList.toggle('done', !!ST[sid]);
+  const pr = prog(t);
+  if (pr) {
+    const pct = Math.round((pr.d / pr.n) * 100);
+    const pb = document.getElementById('pb-' + tid); const pl = document.getElementById('pl-' + tid);
+    if (pb) pb.style.width = pct + '%'; if (pl) pl.textContent = pct + '%';
+    const meta = document.querySelector('#tk-' + tid + ' .steps-tag');
+    if (meta) meta.textContent = `${pr.d}/${pr.n} steps`;
   }
-  const nowDone=done(t);const tEl=document.getElementById('tk-'+tid);
-  if(tEl)tEl.classList.toggle('done',nowDone);
-  if(ST[sid]){
-    const r=subEl?.getBoundingClientRect();
-    if(r)boom(r.left+r.width/2,r.top+r.height/2,16);
-    if(nowDone&&!was)setTimeout(()=>showPop(t),150);
+  const nowDone = done(t); const tEl = document.getElementById('tk-' + tid);
+  if (tEl) tEl.classList.toggle('done', nowDone);
+  if (ST[sid]) {
+    const r = subEl?.getBoundingClientRect();
+    if (r) boom(r.left + r.width / 2, r.top + r.height / 2, 16);
+    if (nowDone && !was) setTimeout(() => showPop(t), 150);
     else toast('+step done');
   }
   updateHUD();
+  schedSave();
 }
 
-function togExp(id,e){
-  if(e)e.stopPropagation();
-  ST['o_'+id]=!ST['o_'+id];save();
-  document.getElementById('subs-'+id)?.classList.toggle('open',!!ST['o_'+id]);
-  document.querySelector(`[onclick="togExp('${id}',event)"]`)?.classList.toggle('open',!!ST['o_'+id]);
+function togExp(id, e) {
+  if (e) e.stopPropagation();
+  ST['o_' + id] = !ST['o_' + id];
+  document.getElementById('subs-' + id)?.classList.toggle('open', !!ST['o_' + id]);
+  document.querySelector(`[onclick="togExp('${id}',event)"]`)?.classList.toggle('open', !!ST['o_' + id]);
+  // don't sync for expand state — local only
 }
 
-document.getElementById('tabs').addEventListener('click',e=>{
-  const pill=e.target.closest('.tab');if(!pill)return;
-  tab=pill.dataset.cat;
-  document.querySelectorAll('.tab').forEach(p=>p.classList.toggle('active',p===pill));
+document.getElementById('tabs').addEventListener('click', e => {
+  const pill = e.target.closest('.tab'); if (!pill) return;
+  tab = pill.dataset.cat;
+  document.querySelectorAll('.tab').forEach(p => p.classList.toggle('active', p === pill));
   render();
 });
 
-render();
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function initApp() {
+  setLoading(30, 'Loading progress...');
+  try {
+    ST = await sbGet();
+    lastSyncStr = JSON.stringify(ST);
+    setLoading(90, 'Almost there...');
+    setSyncDot('synced');
+  } catch {
+    ST = {};
+    setSyncDot('error');
+    toast('offline — changes will sync when back online');
+  }
+  render();
+  setTimeout(hideLoading, 300);
+  startPolling();
+}
+
+async function boot() {
+  const cfg = loadCfg();
+  if (cfg) {
+    SB_URL = cfg.url;
+    SB_KEY = cfg.key;
+    document.getElementById('setup').classList.add('hide');
+    await initApp();
+  } else {
+    // Show setup screen
+    hideLoading();
+  }
+}
+
+boot();
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/house/sw.js').catch(() => {});
 </script>
 </body>
 </html>
