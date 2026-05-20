@@ -296,11 +296,12 @@ function saveCfg(url, key) {
 let SB_URL = '', SB_KEY = '';
 
 function sbHeaders() {
-  // Supports both new sb_publishable_... keys and legacy JWT anon keys
-  const isNew = SB_KEY.startsWith('sb_');
-  return isNew
-    ? { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SB_KEY }
-    : { 'Content-Type': 'application/json', 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+  // Both new sb_publishable_ keys and legacy JWT keys need apikey + Authorization
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY
+  };
 }
 
 async function sbGet() {
@@ -373,7 +374,7 @@ async function saveConfig() {
     document.getElementById('setup').classList.add('hide');
     await initApp();
   } catch (e) {
-    err.textContent = 'Could not connect. Double-check your URL and key, and make sure you ran both SQL queries.';
+    err.textContent = 'Could not connect (' + e.message + '). Double-check your URL and key, and make sure you ran both SQL queries.';
     SB_URL = ''; SB_KEY = '';
   }
 }
