@@ -657,7 +657,12 @@ async function boot() {
 
 boot();
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/house/sw.js').catch(() => {});
+// Unregister any old service workers that may be causing redirect issues
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  });
+}
 </script>
 </body>
 </html>
